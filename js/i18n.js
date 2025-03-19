@@ -186,6 +186,8 @@ function setLanguage(langCode) {
 
 // Inizializza la traduzione quando il documento è pronto
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM caricato, inizializzazione traduzioni...");
+    
     // Imposta lingua iniziale
     setLanguage(currentLanguage);
     
@@ -193,12 +195,26 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.dropdown-item[data-lang]').forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            setLanguage(this.getAttribute('data-lang'));
+            console.log("Cambio lingua a:", this.getAttribute('data-lang'));
+            const langCode = this.getAttribute('data-lang');
+            setLanguage(langCode);
+            
+            // Feedback visivo
+            const feedbackMsg = document.createElement('div');
+            feedbackMsg.className = 'position-fixed top-50 start-50 translate-middle p-3 bg-success text-white rounded';
+            feedbackMsg.style.zIndex = '9999';
+            feedbackMsg.innerHTML = `<i class="fas fa-check-circle me-2"></i>Lingua cambiata: ${
+                langCode === 'it' ? 'Italiano' : 
+                langCode === 'ar' ? 'العربية' : 
+                langCode === 'ro' ? 'Română' : 'Shqip'
+            }`;
+            document.body.appendChild(feedbackMsg);
+            setTimeout(() => {
+                feedbackMsg.remove();
+            }, 2000);
         });
     });
+    
+    // Debug: elenca tutti gli elementi traducibili
+    console.log("Elementi traducibili:", document.querySelectorAll('[data-i18n]').length);
 });
-
-// Funzione per ottenere una traduzione
-function getMessage(key) {
-    return translations[currentLanguage][key] || translations['it'][key] || key;
-}

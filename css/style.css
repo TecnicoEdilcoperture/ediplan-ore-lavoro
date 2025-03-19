@@ -49,6 +49,24 @@ body {
     color: white;
 }
 
+/* Aggiusta posizionamento language selector */
+.language-selector {
+    position: absolute;
+    top: 60px; /* Sposta il selettore della lingua sotto la navbar */
+    right: 10px;
+    z-index: 100;
+}
+
+/* Adatta il margine superiore del container quando è presente il selettore lingua */
+.container.py-5 {
+    margin-top: 30px;
+}
+
+/* Assicurati che il dropdown della lingua non venga tagliato */
+.dropdown-menu {
+    z-index: 1050;
+}
+
 .btn-success:hover, .btn-success:active {
     background-color: #F57C00;
     border-color: #F57C00;
