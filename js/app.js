@@ -134,6 +134,7 @@ function handleRegistraOre(e) {
         cantiereId: parseInt(cantiereSelect.value),
         cantiereName: cantieri.find(c => c.id == cantiereSelect.value)?.nome || '',
         ore: parseFloat(oreLavorate.value),
+        oreStrada: parseFloat(oreStrada.value) || 0,
         straordinario: parseFloat(straordinario.value) || 0,
         note: note.value,
         timestamp: new Date().toISOString()
@@ -178,11 +179,12 @@ function caricaRiepilogo() {
     riepilogoBody.innerHTML = '';
     
     let totOre = 0;
+    let totOreStrada = 0;
     let totStraordinario = 0;
     
     if (registrazioni.length === 0) {
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="4" class="text-center">Nessuna registrazione recente</td>';
+        tr.innerHTML = `<td colspan="5" class="text-center">${getMessage('noRecentRegistrations')}</td>`;
         riepilogoBody.appendChild(tr);
     } else {
         registrazioni.forEach(reg => {
@@ -196,18 +198,21 @@ function caricaRiepilogo() {
                 <td>${dataFormattata}</td>
                 <td>${reg.cantiereName}</td>
                 <td>${reg.ore}</td>
-                <td>${reg.straordinario}</td>
+                <td>${reg.oreStrada || 0}</td>
+                <td>${reg.straordinario || 0}</td>
             `;
             
             riepilogoBody.appendChild(tr);
             
             totOre += reg.ore;
-            totStraordinario += reg.straordinario;
+            totOreStrada += reg.oreStrada || 0;
+            totStraordinario += reg.straordinario || 0;
         });
     }
     
     // Aggiorna totali
     totaleOre.textContent = totOre.toFixed(1);
+    totalOreStrada.textContent = totOreStrada.toFixed(1);
     totaleStraordinario.textContent = totStraordinario.toFixed(1);
 }
 
