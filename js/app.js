@@ -256,26 +256,13 @@ function sincronizzaDati() {
     
     if (registrazioniDaSincronizzare.length === 0) {
         console.log('Nessun dato da sincronizzare');
+        // Nascondi l'indicatore di sincronizzazione
+        const syncIndicator = document.querySelector('.toast');
+        if (syncIndicator && syncIndicator.parentNode) {
+            syncIndicator.parentNode.remove();
+        }
         return;
     }
-    
-    // Mostra indicatore di sincronizzazione
-    const syncIndicator = document.createElement('div');
-    syncIndicator.className = 'position-fixed top-0 end-0 p-3';
-    syncIndicator.innerHTML = `
-        <div class="toast show" role="alert">
-            <div class="toast-header">
-                <strong class="me-auto">Sincronizzazione</strong>
-            </div>
-            <div class="toast-body">
-                <div class="d-flex align-items-center">
-                    <div class="spinner-border spinner-border-sm text-primary me-2"></div>
-                    Sincronizzazione dati in corso...
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(syncIndicator);
     
     // Crea un array di promesse per la sincronizzazione
     const promises = registrazioniDaSincronizzare.map(reg => {
@@ -286,7 +273,8 @@ function sincronizzaDati() {
             cantiereId: reg.cantiereId,
             cantiereName: reg.cantiereName,
             ore: reg.ore,
-            straordinario: reg.straordinario,
+            oreStrada: reg.oreStrada || 0,
+            straordinario: reg.straordinario || 0,
             note: reg.note,
             timestamp: reg.timestamp,
             sincronizzatoIl: firebase.firestore.FieldValue.serverTimestamp()
@@ -312,30 +300,35 @@ function sincronizzaDati() {
             
             localStorage.setItem('registrazioniOre', JSON.stringify(registrazioni));
             
-            // Rimuovi l'indicatore di sincronizzazione dopo 2 secondi
-            setTimeout(() => {
-                document.body.removeChild(syncIndicator);
-            }, 2000);
+            // Rimuovi l'indicatore di sincronizzazione
+            const syncIndicator = document.querySelector('.toast');
+            if (syncIndicator && syncIndicator.parentNode) {
+                syncIndicator.parentNode.remove();
+            }
         })
         .catch(error => {
             console.error('Errore durante la sincronizzazione:', error);
             
-            // Cambia indicatore in errore
-            syncIndicator.innerHTML = `
-                <div class="toast show bg-danger text-white" role="alert">
-                    <div class="toast-header bg-danger text-white">
-                        <strong class="me-auto">Errore</strong>
+            // Aggiorna l'indicatore in caso di errore
+            const syncIndicator = document.querySelector('.toast');
+            if (syncIndicator) {
+                syncIndicator.classList.add('bg-danger');
+                syncIndicator.innerHTML = `
+                    <div class="toast-body text-white">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Errore durante la sincronizzazione.
+                        </div>
                     </div>
-                    <div class="toast-body">
-                        Errore durante la sincronizzazione. Riprova più tardi.
-                    </div>
-                </div>
-            `;
-            
-            // Rimuovi l'indicatore dopo 3 secondi
-            setTimeout(() => {
-                document.body.removeChild(syncIndicator);
-            }, 3000);
+                `;
+                
+                // Rimuovi l'indicatore dopo 3 secondi
+                setTimeout(() => {
+                    if (syncIndicator.parentNode) {
+                        syncIndicator.parentNode.remove();
+                    }
+                }, 3000);
+            }
         });
 }
 
