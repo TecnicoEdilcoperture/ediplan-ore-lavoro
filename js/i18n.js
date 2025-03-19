@@ -147,6 +147,7 @@ let currentLanguage = localStorage.getItem('appLanguage') || 'it';
 
 // Funzione per tradurre l'interfaccia
 function translateUI() {
+    console.log("Traduzione UI in:", currentLanguage);
     const elementsToTranslate = document.querySelectorAll('[data-i18n]');
     const currentTranslations = translations[currentLanguage];
     
@@ -175,6 +176,8 @@ function translateUI() {
             }
         }
     });
+    
+    console.log("Traduzione completata, elementi tradotti:", elementsToTranslate.length);
 }
 
 // Imposta lingua e traduci UI
@@ -196,25 +199,12 @@ document.addEventListener('DOMContentLoaded', function() {
         item.addEventListener('click', function(e) {
             e.preventDefault();
             console.log("Cambio lingua a:", this.getAttribute('data-lang'));
-            const langCode = this.getAttribute('data-lang');
-            setLanguage(langCode);
-            
-            // Feedback visivo
-            const feedbackMsg = document.createElement('div');
-            feedbackMsg.className = 'position-fixed top-50 start-50 translate-middle p-3 bg-success text-white rounded';
-            feedbackMsg.style.zIndex = '9999';
-            feedbackMsg.innerHTML = `<i class="fas fa-check-circle me-2"></i>Lingua cambiata: ${
-                langCode === 'it' ? 'Italiano' : 
-                langCode === 'ar' ? 'العربية' : 
-                langCode === 'ro' ? 'Română' : 'Shqip'
-            }`;
-            document.body.appendChild(feedbackMsg);
-            setTimeout(() => {
-                feedbackMsg.remove();
-            }, 2000);
+            setLanguage(this.getAttribute('data-lang'));
         });
     });
-    
-    // Debug: elenca tutti gli elementi traducibili
-    console.log("Elementi traducibili:", document.querySelectorAll('[data-i18n]').length);
 });
+
+// Funzione per ottenere una traduzione
+function getMessage(key) {
+    return translations[currentLanguage][key] || translations['it'][key] || key;
+}

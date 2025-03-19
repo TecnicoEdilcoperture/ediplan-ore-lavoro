@@ -119,11 +119,12 @@ function doLogin(operaio) {
 }
 
 // Gestisce la registrazione delle ore
+// Gestisce la registrazione delle ore
 function handleRegistraOre(e) {
     e.preventDefault();
     
     if (!currentUser) {
-        alert('Devi prima effettuare il login');
+        alert(getMessage('notLoggedIn'));
         return;
     }
     
@@ -157,7 +158,7 @@ function handleRegistraOre(e) {
     registraOreForm.reset();
     dataLavoro.valueAsDate = new Date();
     
-    alert('Ore registrate con successo!');
+    alert(getMessage('hoursRegisteredSuccess'));
 }
 
 // Carica riepilogo settimanale
@@ -204,15 +205,15 @@ function caricaRiepilogo() {
             
             riepilogoBody.appendChild(tr);
             
-            totOre += reg.ore;
-            totOreStrada += reg.oreStrada || 0;
-            totStraordinario += reg.straordinario || 0;
+            totOre += parseFloat(reg.ore) || 0;
+            totOreStrada += parseFloat(reg.oreStrada) || 0;
+            totStraordinario += parseFloat(reg.straordinario) || 0;
         });
     }
     
     // Aggiorna totali
     totaleOre.textContent = totOre.toFixed(1);
-    totalOreStrada.textContent = totOreStrada.toFixed(1);
+    document.getElementById('totaleOreStrada').textContent = totOreStrada.toFixed(1);
     totaleStraordinario.textContent = totStraordinario.toFixed(1);
 }
 
